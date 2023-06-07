@@ -1,91 +1,81 @@
 #include <iostream>
-using namespace std;
 
-// Forward declaration de las clases visitables
-class ElementA;
-class ElementB;
+class Character;
 
-// Interfaz del visitante
-class Visitor
+// Visitante de habilidades
+class AbilityVisitor 
 {
     public:
-        virtual ~Visitor() {}
-        virtual void visit(ElementA* element) = 0;
-        virtual void visit(ElementB* element) = 0;
+        virtual void visit(Character& character) = 0;
 };
 
-// Clase base para los elementos visitables
-class Element
+// Clase base de personajes del juego
+class Character
 {
     public:
-        virtual ~Element() {}
-        virtual void accept(Visitor* visitor) = 0;
+        virtual void accept(AbilityVisitor& visitor) = 0;
 };
 
-// Implementación de los elementos visitables
-class ElementA : public Element
+// Implementación de un personaje del juego (por ejemplo, un mago)
+class Wizard : public Character
 {
     public:
-        ElementA() {}
-        ~ElementA() {}
-        
-        void accept(Visitor* visitor) override
+        void accept(AbilityVisitor& visitor) override 
         {
-            visitor->visit(this);
-        }
-        
-        void operationA()
-        {
-            std::cout << "Operacion A en ElementA\n";
+            visitor.visit(*this);
         }
 };
 
-class ElementB : public Element
+// Implementación de un personaje del juego (por ejemplo, un guerrero)
+class Warrior : public Character
 {
     public:
-        ElementB() {}
-        ~ElementB() {}
-        
-        void accept(Visitor* visitor) override
+        void accept(AbilityVisitor& visitor) override
         {
-            visitor->visit(this);
-        }
-        
-        void operationB()
-        {
-            std::cout << "Operacion B en ElementB\n";
+            visitor.visit(*this);
         }
 };
 
-// Implementación concreta del visitante
-class ConcreteVisitor : public Visitor
+// Implementación del visitante de habilidades para magos
+class WizardAbilityVisitor : public AbilityVisitor
 {
     public:
-        ConcreteVisitor() {}
-        ~ConcreteVisitor() {}
-        
-        void visit(ElementA* element) override
+        void visit(Character& character) override
         {
-            std::cout << "ConcreteVisitor visitando ElementA\n";
-            element->operationA();
-        }
-        
-        void visit(ElementB* element) override
-        {
-            std::cout << "ConcreteVisitor visitando ElementB\n";
-            element->operationB();
+            std::cout << "Activando habilidad de mago" << std::endl;
+            // Lógica específica para habilidades de magos
+            // ...
         }
 };
-// Uso del patrón Visitor
+
+// Implementación del visitante de habilidades para guerreros
+class WarriorAbilityVisitor : public AbilityVisitor
+{
+    public:
+        void visit(Character& character) override
+        {
+            std::cout << "Activando habilidad de guerrero" << std::endl;
+            // Lógica específica para habilidades de guerreros
+            // ...
+        }
+};
+
+// Uso del patrón Visitor en el contexto de habilidades
+void activateAbility(Character& character, AbilityVisitor& visitor)
+{
+    character.accept(visitor);
+}
 
 int main()
 {
-	ElementA elementA;
-	ElementB elementB;
-	ConcreteVisitor visitor;
-	
-	elementA.accept(&visitor);
-	elementB.accept(&visitor);
-	
-	return 0;
+    Wizard wizard;
+    Warrior warrior;
+
+    WizardAbilityVisitor wizardVisitor;
+    WarriorAbilityVisitor warriorVisitor;
+
+    activateAbility(wizard, wizardVisitor);    // Salida: Activando habilidad de mago
+    activateAbility(warrior, warriorVisitor);  // Salida: Activando habilidad de guerrero
+
+    return 0;
 }

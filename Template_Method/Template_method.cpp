@@ -1,79 +1,76 @@
+
 #include <iostream>
 
 // Clase abstracta que define el template method
-class AbstractClass
+class Battle
 {
-    public:
-        AbstractClass() {}
-        virtual ~AbstractClass() {}
-
-        void TemplateMethod()
-        {
-            // Paso 1
-            Step1();
-
-            // Paso 2 (abstracto, implementado por las subclases)
-            Step2();
-
-            // Paso 3
-            Step3();
-        }
-
-        // Paso 1 (común a todas las subclases)
-        void Step1()
-        {
-            std::cout << "Realizando el paso 1." << std::endl;
-        }
-
-        // Paso 3 (común a todas las subclases)
-        void Step3()
-        {
-            std::cout << "Realizando el paso 3." << std::endl;
-        }
-
-        // Paso 2 (abstracto, implementado por las subclases)
-        virtual void Step2() = 0;
-};
-
-// Subclase que implementa el paso 2 específico
-class ConcreteClassA : public AbstractClass
-{
-    public:
-        ConcreteClassA() {}
-        ~ConcreteClassA() {}
-
-        void Step2() override
-        {
-            std::cout << "Realizando el paso 2 especifico para ConcreteClassA." << std::endl;
-        }
-};
-
-// Otra subclase que implementa el paso 2 específico
-class ConcreteClassB : public AbstractClass {
 public:
-    ConcreteClassB() {}
-    ~ConcreteClassB() {}
+    Battle() {} //Constructor
 
-    void Step2() override
+    virtual ~Battle() {} //Destructor
+
+    virtual void pelea() final //La implementación en las subclases no modificará el TEMPLATE METHOD
     {
-        std::cout << "Realizando el paso 2 especifico para ConcreteClassB." << std::endl;
+        prepararse();
+        ataque();
+        endBattle();
+    }
+
+    // Paso 1: Preparación (común a todas las batallas)
+    void prepararse()
+    {
+        std::cout << "Preparando la batalla." << std::endl;
+    }
+
+    // Paso 3: Fin de la batalla (común a todas las batallas)
+    void endBattle()
+    {
+        std::cout << "La batalla ha terminado." << std::endl;
+    }
+
+    // Paso 2: Ataque (abstracto, implementado por las subclases)
+    virtual void ataque() = 0;
+};
+
+// Subclase que implementa el paso 2 específico para una batalla de espadas
+class BatallaEspada : public Battle
+{
+public:
+    BatallaEspada() {} //Constructor
+    virtual ~BatallaEspada() {} //Destructor
+
+    void ataque() override //Es necesario realizar la implementación
+    {
+        std::cout << "Atacando con una espada." << std::endl;
+    }
+};
+
+// Otra subclase que implementa el paso 2 específico para una batalla de arcos
+class BatallaArco : public Battle
+{
+public:
+    BatallaArco() {} //Constructor
+    virtual ~BatallaArco() {} //Destructor
+    void ataque() override //Es necesario realizar la implementación
+    {
+        std::cout << "Atacando con un arco." << std::endl;
     }
 };
 
 int main()
 {
-    // Utilizando ConcreteClassA
-    AbstractClass* objectA = new ConcreteClassA();
-    objectA->TemplateMethod();
+    // Batalla con espadas
+    Battle* a = new BatallaEspada();
+    a->pelea();
 
     std::cout << std::endl;
 
-    // Utilizando ConcreteClassB
-    AbstractClass* objectB = new ConcreteClassB();
-    objectB->TemplateMethod();
+    // Batalla con arcos
+    Battle* b = new BatallaArco();
+    b->pelea();
 
-    delete objectA;
-    delete objectB;
+    delete a;
+    delete b;
 
     return 0;
 }
